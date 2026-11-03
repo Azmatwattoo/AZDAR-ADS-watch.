@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AzDar Ads Watching</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+ margin:0;
+ padding:16px;
+ background:#07111f;
+ color:#f5f8ff;
+ font-family:Arial,sans-serif;
+}
+
+header{
+ text-align:center;
+ padding:20px 5px;
+}
+
+h1{
+ color:#00e5ff;
+ margin:0 0 8px;
+}
+
+header p{color:#aab8cc}
+
+.stats,.card{
+ background:#101d30;
+ border:1px solid #263b57;
+ border-radius:15px;
+ padding:15px;
+}
+
+.stats{
+ max-width:1000px;
+ margin:10px auto 22px;
+}
+
+#counter{
+ font-size:23px;
+ font-weight:bold;
+ color:#00e5ff;
+ margin-top:8px;
+}
+
+.progress-bg{
+ height:12px;
+ background:#26364c;
+ border-radius:20px;
+ overflow:hidden;
+ margin-top:12px;
+}
+
+.progress{
+ height:100%;
+ width:0;
+ background:linear-gradient(90deg,#a855f7,#00e5ff);
+ transition:width .3s;
+}
+
+#message{
+ color:#aab8cc;
+ font-size:14px;
+}
+
+#timer{
+ color:#00e5ff;
+ font-weight:bold;
+ font-size:14px;
+}
+
+.grid{
+ max-width:1100px;
+ margin:auto;
+ display:grid;
+ grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+ gap:16px;
+}
+
+.card h3{font-size:16px}
+
+video{
+ width:100%;
+ height:165px;
+ background:#000;
+ border-radius:10px;
+}
+
+.status{
+ font-size:13px;
+ color:#aab8cc;
+ margin-top:10px;
+}
+
+.done{color:#00e5a0}
+
+footer{
+ text-align:center;
+ color:#8393aa;
+ padding:25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>⚡ AZDAR ADS WATCHING</h1>
+<p>30 Videos Library • Daily Target 10</p>
+</header>
+
+<section class="stats">
+ <div>DAILY PROGRESS</div>
+
+ <div id="counter">0 / 10 Videos Completed</div>
+
+ <div class="progress-bg">
+  <div class="progress" id="progress"></div>
+ </div>
+
+ <p id="message">Complete any 10 videos.</p>
+ <div id="timer">24-hour reset starts after your first completed video.</div>
+</section>
+
+<main class="grid" id="videoGrid"></main>
+
+<footer>© 2026 AzDar Web Studio</footer>
+
+<script>
+
+// 30 VIDEOS LIBRARY
+
+const videos=[
+["Video 1","https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"],
+["Video 2","https://media.w3.org/2010/05/sintel/trailer.mp4"],
+["Video 3","https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
+["Video 4","https://samplelib.com/lib/preview/mp4/sample-15s.mp4"],
+["Video 5","https://samplelib.com/lib/preview/mp4/sample-20s.mp4"],
+["Video 6","https://samplelib.com/lib/preview/mp4/sample-30s.mp4"],
+["Video 7","https://www.w3schools.com/html/mov_bbb.mp4"],
+["Video 8","https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"],
+["Video 9","https://www.sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4"],
+["Video 10","https://www.samplefiles.online/files/sample.mp4"],
+["Video 11","https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"],
+["Video 12","https://media.w3.org/2010/05/sintel/trailer.mp4"],
+["Video 13","https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
+["Video 14","https://samplelib.com/lib/preview/mp4/sample-15s.mp4"],
+["Video 15","https://samplelib.com/lib/preview/mp4/sample-20s.mp4"],
+["Video 16","https://samplelib.com/lib/preview/mp4/sample-30s.mp4"],
+["Video 17","https://www.w3schools.com/html/mov_bbb.mp4"],
+["Video 18","https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"],
+["Video 19","https://www.sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4"],
+["Video 20","https://www.samplefiles.online/files/sample.mp4"],
+["Video 21","https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"],
+["Video 22","https://media.w3.org/2010/05/sintel/trailer.mp4"],
+["Video 23","https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4"],
+["Video 24","https://samplelib.com/lib/preview/mp4/sample-15s.mp4"],
+["Video 25","https://samplelib.com/lib/preview/mp4/sample-20s.mp4"],
+["Video 26","https://samplelib.com/lib/preview/mp4/sample-30s.mp4"],
+["Video 27","https://www.w3schools.com/html/mov_bbb.mp4"],
+["Video 28","https://www.learningcontainer.com/wp-content/uploads/2020/05/sample-mp4-file.mp4"],
+["Video 29","https://www.sample-videos.com/video321/mp4/720/big_buck_bunny_720p_1mb.mp4"],
+["Video 30","https://www.samplefiles.online/files/sample.mp4"]
+];
+
+// 24 HOURS CYCLE SYSTEM
+
+const STORAGE_KEY="azdarVersion1Cycle";
+const CYCLE_TIME=24*60*60*1000;
+
+let cycle;
+
+try{
+ cycle=JSON.parse(localStorage.getItem(STORAGE_KEY)||"null");
+}catch(e){
+ cycle=null;
+}
+
+if(!cycle || !Array.isArray(cycle.done)){
+ cycle={startedAt:null,done:[]};
+}
+
+cycle.done=[...new Set(
+ cycle.done.filter(n=>
+  Number.isInteger(n)&&n>=0&&n<videos.length
+))].slice(0,10);
+
+function saveCycle(){
+ localStorage.setItem(STORAGE_KEY,JSON.stringify(cycle));
+}
+
+function resetCycle(){
+ cycle={
+  startedAt:null,
+  done:[]
+ };
+
+ saveCycle();
+ update();
+}
+
+function checkExpiry(){
+ if(
+  cycle.startedAt &&
+  Date.now()>=cycle.startedAt+CYCLE_TIME
+ ){
+  resetCycle();
+  return true;
+ }
+
+ return false;
+}
+
+// PAGE ELEMENTS
+
+const grid=document.getElementById("videoGrid");
+const cardRecords=[];
+
+// COUNTDOWN
+
+function updateTimer(){
+
+ if(!cycle.startedAt){
+  document.getElementById("timer").textContent=
+  "24-hour reset starts after your first completed video.";
+  return;
+ }
+
+ const remaining=(cycle.startedAt+CYCLE_TIME)-Date.now();
+
+ if(remaining<=0){
+  resetCycle();
+  return;
+ }
+
+ const hours=Math.floor(remaining/3600000);
+ const minutes=Math.floor((remaining%3600000)/60000);
+ const seconds=Math.floor((remaining%60000)/1000);
+
+ document.getElementById("timer").textContent=
+  "Next reset in: "+
+  String(hours).padStart(2,"0")+":"+
+  String(minutes).padStart(2,"0")+":"+
+  String(seconds).padStart(2,"0");
+}
+
+// UPDATE PROGRESS
+
+function update(){
+
+ const total=Math.min(cycle.done.length,10);
+
+ document.getElementById("counter").textContent=
+  total+" / 10 Videos Completed";
+
+ document.getElementById("progress").style.width=
+  (total*10)+"%";
+
+ document.getElementById("message").textContent=
+  total>=10
+  ?"Daily Target Completed! Come back after 24 hours."
+  :(10-total)+" videos remaining.";
+
+ updateTimer();
+
+ updateCards();
+}
+
+// UPDATE VIDEO STATUS
+
+function updateCards(){
+
+ cardRecords.forEach(record=>{
+
+  const completed=cycle.done.includes(record.index);
+  const limitReached=cycle.done.length>=10;
+
+  if(completed){
+
+   record.status.textContent="✓ Completed";
+   record.status.className="status done";
+
+  }else if(limitReached){
+
+   record.status.textContent="Daily limit reached";
+   record.status.className="status";
+
+  }else{
+
+   record.status.textContent="Watch 10 seconds continuously";
+   record.status.className="status";
+
+  }
+
+ });
+
+}
+
+// VIDEO WATCHING SYSTEM
+
+videos.forEach((item,index)=>{
+
+ const card=document.createElement("section");
+ card.className="card";
+
+ const heading=document.createElement("h3");
+ heading.textContent=item[0];
+
+ const video=document.createElement("video");
+ video.src=item[1];
+ video.controls=true;
+ video.preload="none";
+ video.playsInline=true;
+
+ const status=document.createElement("div");
+ status.className="status";
+
+ let watched=0;
+ let lastTime=null;
+
+ const record={
+  index:index,
+  video:video,
+  status:status
+ };
+
+ cardRecords.push(record);
+
+ function complete(){
+
+  checkExpiry();
+
+  if(cycle.done.includes(index))return;
+  if(cycle.done.length>=10)return;
+
+  // Start 24-hour timer on first completed video
+
+  if(!cycle.startedAt){
+   cycle.startedAt=Date.now();
+  }
+
+  cycle.done.push(index);
+
+  saveCycle();
+
+  watched=0;
+  lastTime=null;
+
+  video.pause();
+
+  update();
+ }
+
+ video.addEventListener("playing",()=>{
+
+  checkExpiry();
+
+  if(
+   cycle.done.includes(index) ||
+   cycle.done.length>=10
+  ){
+   video.pause();
+   return;
+  }
+
+  lastTime=video.currentTime;
+
+ });
+
+ video.addEventListener("timeupdate",()=>{
+
+  checkExpiry();
+
+  if(
+   cycle.done.includes(index) ||
+   cycle.done.length>=10 ||
+   video.paused
+  ){
+   return;
+  }
+
+  const now=video.currentTime;
+
+  if(lastTime!==null){
+
+   const gap=now-lastTime;
+
+   if(gap>0 && gap<=1.5){
+    watched+=gap;
+   }else if(gap>1.5){
+    watched=0;
+   }
+
+  }
+
+  lastTime=now;
+
+  if(watched>=10){
+
+   complete();
+
+  }else{
+
+   status.textContent=
+    "Watched "+Math.floor(watched)+" / 10 seconds";
+
+  }
+
+ });
+
+ video.addEventListener("seeking",()=>{
+
+  watched=0;
+  lastTime=null;
+
+  if(!cycle.done.includes(index)){
+   status.textContent="Watch 10 seconds again";
+  }
+
+ });
+
+ video.addEventListener("pause",()=>{
+
+  lastTime=null;
+
+  if(!cycle.done.includes(index)){
+   watched=0;
+
+   if(cycle.done.length<10){
+    status.textContent="Paused - watch 10 seconds";
+   }
+  }
+
+ });
+
+ video.addEventListener("error",()=>{
+
+  status.textContent="Video unavailable - try another video";
+
+ });
+
+ card.appendChild(heading);
+ card.appendChild(video);
+ card.appendChild(status);
+
+ grid.appendChild(card);
+
+});
+
+// INITIAL CHECK
+
+checkExpiry();
+update();
+
+// AUTOMATIC 24-HOUR RESET CHECK
+
+setInterval(()=>{
+ checkExpiry();
+ updateTimer();
+},1000);
+
+</script>
+
+</body>
+</html>
