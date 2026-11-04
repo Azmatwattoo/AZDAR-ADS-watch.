@@ -9,50 +9,71 @@
 *{box-sizing:border-box}
 
 body{
- margin:0;padding:16px;
- background:#07111f;color:#f5f8ff;
+ margin:0;
+ padding:15px;
+ background:#07111f;
+ color:#f5f8ff;
  font-family:Arial,sans-serif;
 }
 
-header{text-align:center;padding:20px 5px}
+header{
+ text-align:center;
+ padding:22px 5px;
+}
+
 h1{color:#00e5ff;margin:0 0 8px}
 header p{color:#aab8cc}
 
-.stats,.card,.earning-card{
+.dashboard{
+ max-width:1000px;
+ margin:10px auto 20px;
+ display:grid;
+ grid-template-columns:repeat(3,minmax(0,1fr));
+ gap:12px;
+}
+
+.earning-card,.stats,.card,.payment{
  background:#101d30;
  border:1px solid #263b57;
  border-radius:15px;
- padding:15px;
-}
-
-.stats{max-width:1000px;margin:10px auto 18px}
-
-.earning-grid{
- max-width:1000px;margin:0 auto 18px;
- display:grid;
- grid-template-columns:repeat(2,minmax(0,1fr));
- gap:12px;
+ padding:16px;
 }
 
 .earning-card{text-align:center}
 .earning-card h3{
- color:#aab8cc;font-size:13px;margin:0 0 10px;
+ color:#aab8cc;
+ font-size:12px;
+ margin:0 0 10px;
 }
+
 .earning-card strong{
- color:#00e5ff;font-size:23px;
+ color:#00e5ff;
+ font-size:21px;
+}
+
+.stats{
+ max-width:1000px;
+ margin:0 auto 22px;
 }
 
 #counter{
- font-size:22px;font-weight:bold;
- color:#00e5ff;margin-top:8px;
+ font-size:22px;
+ font-weight:bold;
+ color:#00e5ff;
+ margin-top:8px;
 }
 
 .progress-bg{
- height:12px;background:#26364c;
- border-radius:20px;overflow:hidden;margin-top:12px;
+ height:12px;
+ background:#26364c;
+ border-radius:20px;
+ overflow:hidden;
+ margin-top:12px;
 }
+
 .progress{
- height:100%;width:0;
+ height:100%;
+ width:0;
  background:linear-gradient(90deg,#a855f7,#00e5ff);
  transition:width .3s;
 }
@@ -61,67 +82,87 @@ header p{color:#aab8cc}
 #timer{color:#00e5ff;font-weight:bold;font-size:14px}
 
 .grid{
- max-width:1100px;margin:auto;
+ max-width:1100px;
+ margin:auto;
  display:grid;
  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
  gap:16px;
 }
 
 .card h3{font-size:16px}
+
 video{
- width:100%;height:165px;
- background:#000;border-radius:10px;
+ width:100%;
+ height:165px;
+ background:#000;
+ border-radius:10px;
 }
-.status{font-size:13px;color:#aab8cc;margin-top:10px}
+
+.status{
+ font-size:13px;
+ color:#aab8cc;
+ margin-top:10px;
+}
+
 .done{color:#00e5a0}
 
 .payment{
- max-width:600px;margin:30px auto 10px;
- padding:20px;
- background:#101d30;
- border:1px solid #263b57;
- border-radius:15px;
+ max-width:600px;
+ margin:35px auto 10px;
+ padding:22px;
+ border:2px solid #00e5ff;
 }
+
 .payment h2{
- text-align:center;color:#00e5ff;
+ text-align:center;
+ color:#00e5ff;
  margin:0 0 20px;
 }
+
 .payment-row{
- display:flex;justify-content:space-between;
- align-items:center;gap:10px;
- padding:13px 0;
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:10px;
+ padding:15px 0;
  border-bottom:1px solid #263b57;
- font-size:14px;
 }
+
 .payment-row:last-child{border-bottom:none}
-.payment-row span{color:#aab8cc}
-.payment-row strong{
- color:#fff;text-align:right;
- overflow-wrap:anywhere;
-}
+.payment-row span{color:#aab8cc;font-size:14px}
+.payment-row strong{color:white;font-size:14px;text-align:right}
 
 footer{
- text-align:center;color:#8393aa;padding:20px 5px;
+ text-align:center;
+ color:#8393aa;
+ padding:25px 5px;
 }
 
-@media(max-width:400px){
- body{padding:10px}
- .earning-card strong{font-size:19px}
- .payment-row{font-size:13px}
+@media(max-width:520px){
+ .dashboard{grid-template-columns:1fr}
+ .earning-card{padding:13px}
+ .earning-card h3{font-size:13px}
+ .earning-card strong{font-size:22px}
+}
+
+@media(min-width:521px) and (max-width:700px){
+ .dashboard{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 </head>
 
 <body>
 
+<!-- TOP HEADING -->
+
 <header>
 <h1>⚡ AZDAR ADS WATCHING</h1>
 <p>30 Videos Library • Daily Target 10</p>
 </header>
 
-<!-- EARNINGS -->
+<!-- EARNINGS AT TOP -->
 
-<section class="earning-grid">
+<section class="dashboard">
 
  <div class="earning-card">
   <h3>TOTAL EARNINGS</h3>
@@ -129,7 +170,12 @@ footer{
  </div>
 
  <div class="earning-card">
-  <h3>TODAY'S EARNING</h3>
+  <h3>PER AD EARNING</h3>
+  <strong>Rs. 150</strong>
+ </div>
+
+ <div class="earning-card">
+  <h3>DAILY EARNING</h3>
   <strong id="dailyEarnings">Rs. 0</strong>
  </div>
 
@@ -138,8 +184,8 @@ footer{
 <!-- DAILY PROGRESS -->
 
 <section class="stats">
- <div>DAILY PROGRESS</div>
 
+ <div>DAILY PROGRESS</div>
  <div id="counter">0 / 10 Ads Completed</div>
 
  <div class="progress-bg">
@@ -147,16 +193,15 @@ footer{
  </div>
 
  <p id="message">Complete any 10 videos.</p>
- <div id="timer">
-  24-hour reset starts after your first completed video.
- </div>
+ <div id="timer">24-hour reset starts after your first completed video.</div>
+
 </section>
 
-<!-- VIDEO LIBRARY -->
+<!-- VIDEOS IN MIDDLE -->
 
 <main class="grid" id="videoGrid"></main>
 
-<!-- PAYMENT DETAILS -->
+<!-- PAYMENT DETAILS AT ABSOLUTE BOTTOM -->
 
 <section class="payment">
 
@@ -182,8 +227,6 @@ footer{
 <footer>© 2026 AzDar Web Studio</footer>
 
 <script>
-
-// 30 VIDEOS LIBRARY
 
 const videos=[
 ["Video 1","https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"],
@@ -227,7 +270,7 @@ const CYCLE_TIME=24*60*60*1000;
 const STORAGE_KEY="azdarVersion1Cycle";
 const EARNING_KEY="azdarTotalEarnings";
 
-// LOAD DAILY CYCLE
+// LOAD CYCLE
 
 let cycle;
 
@@ -242,11 +285,10 @@ if(!cycle || !Array.isArray(cycle.done)){
 }
 
 cycle.done=[...new Set(
- cycle.done.filter(n=>
-  Number.isInteger(n)&&n>=0&&n<videos.length
-))].slice(0,DAILY_LIMIT);
+ cycle.done.filter(n=>Number.isInteger(n)&&n>=0&&n<30)
+)].slice(0,10);
 
-// LOAD TOTAL EARNINGS
+// LOAD EARNINGS
 
 let totalEarnings=0;
 
@@ -264,44 +306,31 @@ function saveEarnings(){
  localStorage.setItem(EARNING_KEY,String(totalEarnings));
 }
 
-// RESET DAILY COUNT ONLY
+// RESET DAILY COUNT
 
 function resetCycle(){
- cycle={
-  startedAt:null,
-  done:[]
- };
+ cycle={startedAt:null,done:[]};
  saveCycle();
  update();
 }
 
-// CHECK 24 HOURS
+// CHECK EXPIRY
 
 function checkExpiry(){
-
- if(
-  cycle.startedAt &&
-  Date.now()>=cycle.startedAt+CYCLE_TIME
- ){
+ if(cycle.startedAt && Date.now()>=cycle.startedAt+CYCLE_TIME){
   resetCycle();
   return true;
  }
-
  return false;
 }
 
-// PAGE ELEMENTS
+// FORMAT MONEY
 
-const grid=document.getElementById("videoGrid");
-const cardRecords=[];
-
-// FORMAT RUPEES
-
-function formatMoney(amount){
- return "Rs. "+Number(amount).toLocaleString("en-PK");
+function money(value){
+ return "Rs. "+value.toLocaleString("en-PK");
 }
 
-// UPDATE TIMER
+// TIMER
 
 function updateTimer(){
 
@@ -311,66 +340,61 @@ function updateTimer(){
   return;
  }
 
- const remaining=(cycle.startedAt+CYCLE_TIME)-Date.now();
+ const remaining=cycle.startedAt+CYCLE_TIME-Date.now();
 
  if(remaining<=0){
   resetCycle();
   return;
  }
 
- const hours=Math.floor(remaining/3600000);
- const minutes=Math.floor((remaining%3600000)/60000);
- const seconds=Math.floor((remaining%60000)/1000);
+ const h=Math.floor(remaining/3600000);
+ const m=Math.floor((remaining%3600000)/60000);
+ const s=Math.floor((remaining%60000)/1000);
 
  document.getElementById("timer").textContent=
-  "Next reset in: "+
-  String(hours).padStart(2,"0")+":"+
-  String(minutes).padStart(2,"0")+":"+
-  String(seconds).padStart(2,"0");
+ "Next reset in: "+
+ String(h).padStart(2,"0")+":"+
+ String(m).padStart(2,"0")+":"+
+ String(s).padStart(2,"0");
 }
 
 // UPDATE DASHBOARD
 
 function update(){
 
- const total=Math.min(cycle.done.length,DAILY_LIMIT);
- const dailyEarning=total*PER_VIDEO_EARNING;
+ const completed=cycle.done.length;
 
  document.getElementById("counter").textContent=
-  total+" / "+DAILY_LIMIT+" Ads Completed";
+ completed+" / 10 Ads Completed";
 
  document.getElementById("progress").style.width=
-  (total/DAILY_LIMIT*100)+"%";
+ (completed*10)+"%";
 
  document.getElementById("message").textContent=
-  total>=DAILY_LIMIT
-  ?"Daily Target Completed! Come back after 24 hours."
-  :(DAILY_LIMIT-total)+" ads remaining.";
-
- document.getElementById("totalEarnings").textContent=
-  formatMoney(totalEarnings);
+ completed>=10
+ ?"Daily Target Completed! Come back after 24 hours."
+ :(10-completed)+" ads remaining.";
 
  document.getElementById("dailyEarnings").textContent=
-  formatMoney(dailyEarning);
+ money(completed*PER_VIDEO_EARNING);
+
+ document.getElementById("totalEarnings").textContent=
+ money(totalEarnings);
 
  updateTimer();
  updateCards();
 }
 
-// UPDATE VIDEO STATUS
+// VIDEO STATUS
 
 function updateCards(){
-
  cardRecords.forEach(record=>{
 
-  const completed=cycle.done.includes(record.index);
-  const limitReached=cycle.done.length>=DAILY_LIMIT;
-
-  if(completed){
+  if(cycle.done.includes(record.index)){
    record.status.textContent="✓ Completed";
    record.status.className="status done";
 
-  }else if(limitReached){
+  }else if(cycle.done.length>=10){
    record.status.textContent="Daily limit reached";
    record.status.className="status";
 
@@ -382,7 +406,10 @@ function updateCards(){
  });
 }
 
-// VIDEO WATCHING SYSTEM
+// VIDEO WATCHING
+
+const grid=document.getElementById("videoGrid");
+const cardRecords=[];
 
 videos.forEach((item,index)=>{
 
@@ -401,34 +428,23 @@ videos.forEach((item,index)=>{
  const status=document.createElement("div");
  status.className="status";
 
- let watched=0;
- let lastTime=null;
-
- const record={
-  index:index,
-  video:video,
-  status:status
- };
-
+ const record={index,video,status};
  cardRecords.push(record);
 
- // COMPLETE VIDEO
+ let watched=0;
+ let lastTime=null;
 
  function complete(){
 
   checkExpiry();
 
-  if(cycle.done.includes(index))return;
-  if(cycle.done.length>=DAILY_LIMIT)return;
+  if(cycle.done.includes(index)||cycle.done.length>=10)return;
 
   if(!cycle.startedAt){
    cycle.startedAt=Date.now();
   }
 
   cycle.done.push(index);
-
-  // ADD RS.150 TO TOTAL EARNINGS
-
   totalEarnings+=PER_VIDEO_EARNING;
 
   saveCycle();
@@ -438,54 +454,36 @@ videos.forEach((item,index)=>{
   lastTime=null;
 
   video.pause();
-
   update();
  }
 
- // VIDEO PLAYING
-
  video.addEventListener("playing",()=>{
-
   checkExpiry();
 
-  if(
-   cycle.done.includes(index) ||
-   cycle.done.length>=DAILY_LIMIT
-  ){
+  if(cycle.done.includes(index)||cycle.done.length>=10){
    video.pause();
    return;
   }
 
   lastTime=video.currentTime;
-
  });
-
- // COUNT WATCHED SECONDS
 
  video.addEventListener("timeupdate",()=>{
 
   checkExpiry();
 
-  if(
-   cycle.done.includes(index) ||
-   cycle.done.length>=DAILY_LIMIT ||
-   video.paused
-  ){
-   return;
-  }
+  if(cycle.done.includes(index)||cycle.done.length>=10||video.paused)return;
 
   const now=video.currentTime;
 
   if(lastTime!==null){
-
    const gap=now-lastTime;
 
-   if(gap>0 && gap<=1.5){
+   if(gap>0&&gap<=1.5){
     watched+=gap;
    }else if(gap>1.5){
     watched=0;
    }
-
   }
 
   lastTime=now;
@@ -493,64 +491,48 @@ videos.forEach((item,index)=>{
   if(watched>=10){
    complete();
   }else{
-   status.textContent=
-    "Watched "+Math.floor(watched)+" / 10 seconds";
+   status.textContent="Watched "+Math.floor(watched)+" / 10 seconds";
   }
 
  });
 
- // PREVENT SEEKING
-
  video.addEventListener("seeking",()=>{
-
   watched=0;
   lastTime=null;
 
   if(!cycle.done.includes(index)){
    status.textContent="Watch 10 seconds again";
   }
-
  });
 
- // PAUSE EVENT
-
  video.addEventListener("pause",()=>{
-
   lastTime=null;
 
   if(!cycle.done.includes(index)){
    watched=0;
-
-   if(cycle.done.length<DAILY_LIMIT){
+   if(cycle.done.length<10){
     status.textContent="Paused - watch 10 seconds";
    }
   }
-
  });
 
- // VIDEO ERROR
-
  video.addEventListener("error",()=>{
-
-  status.textContent=
-   "Video unavailable - try another video";
-
+  status.textContent="Video unavailable - try another video";
  });
 
  card.appendChild(heading);
  card.appendChild(video);
  card.appendChild(status);
-
  grid.appendChild(card);
 
 });
 
-// INITIAL CHECK
+// INITIALIZE
 
 checkExpiry();
 update();
 
-// AUTOMATIC TIMER CHECK
+// AUTO RESET CHECK
 
 setInterval(()=>{
  checkExpiry();
