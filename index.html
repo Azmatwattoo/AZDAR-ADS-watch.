@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -128,9 +129,50 @@ video{
  border-bottom:1px solid #263b57;
 }
 
-.payment-row:last-child{border-bottom:none}
-.payment-row span{color:#aab8cc;font-size:14px}
-.payment-row strong{color:white;font-size:14px;text-align:right}
+.payment-row:last-of-type{border-bottom:none}
+
+.payment-row span{
+ color:#aab8cc;
+ font-size:14px;
+}
+
+.payment-row strong{
+ color:white;
+ font-size:14px;
+ text-align:right;
+}
+
+.withdraw-btn{
+ display:block;
+ width:100%;
+ margin-top:20px;
+ padding:16px;
+ border:none;
+ border-radius:12px;
+ background:linear-gradient(90deg,#a855f7,#00e5ff);
+ color:#07111f;
+ font-size:17px;
+ font-weight:bold;
+ cursor:pointer;
+}
+
+.withdraw-btn:active{
+ transform:scale(.98);
+}
+
+.withdraw-notification{
+ display:none;
+ margin-top:15px;
+ padding:16px;
+ border:1px solid #00e5a0;
+ border-radius:12px;
+ background:#0b2b29;
+ color:#00e5a0;
+ text-align:center;
+ font-size:14px;
+ font-weight:bold;
+ line-height:1.6;
+}
 
 footer{
  text-align:center;
@@ -153,14 +195,12 @@ footer{
 
 <body>
 
-<!-- TOP HEADING -->
-
 <header>
 <h1>⚡ AZDAR ADS WATCHING</h1>
 <p>30 Videos Library • Daily Target 10</p>
 </header>
 
-<!-- EARNINGS AT TOP -->
+<!-- EARNINGS -->
 
 <section class="dashboard">
 
@@ -193,15 +233,17 @@ footer{
  </div>
 
  <p id="message">Complete any 10 videos.</p>
- <div id="timer">24-hour reset starts after your first completed video.</div>
+ <div id="timer">
+  24-hour reset starts after your first completed video.
+ </div>
 
 </section>
 
-<!-- VIDEOS IN MIDDLE -->
+<!-- VIDEOS -->
 
 <main class="grid" id="videoGrid"></main>
 
-<!-- PAYMENT DETAILS AT ABSOLUTE BOTTOM -->
+<!-- PAYMENT DETAILS -->
 
 <section class="payment">
 
@@ -222,11 +264,27 @@ footer{
   <strong>Easypaisa</strong>
  </div>
 
+ <!-- WITHDRAWAL BUTTON -->
+
+ <button class="withdraw-btn" onclick="requestWithdrawal()">
+  💸 WITHDRAWAL
+ </button>
+
+ <!-- WITHDRAWAL NOTIFICATION -->
+
+ <div class="withdraw-notification" id="withdrawNotification">
+  ✓ Your withdrawal request is in process.
+  <br>
+  Please wait while your request is being processed.
+ </div>
+
 </section>
 
 <footer>© 2026 AzDar Web Studio</footer>
 
 <script>
+
+// VIDEO LIBRARY
 
 const videos=[
 ["Video 1","https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/720/Big_Buck_Bunny_720_10s_1MB.mp4"],
@@ -269,6 +327,8 @@ const CYCLE_TIME=24*60*60*1000;
 
 const STORAGE_KEY="azdarVersion1Cycle";
 const EARNING_KEY="azdarTotalEarnings";
+const WITHDRAW_KEY="azdarWithdrawalRequest";
+const WITHDRAW_TIME=5*60*60*1000;
 
 // LOAD CYCLE
 
@@ -298,6 +358,8 @@ try{
  totalEarnings=0;
 }
 
+// SAVE FUNCTIONS
+
 function saveCycle(){
  localStorage.setItem(STORAGE_KEY,JSON.stringify(cycle));
 }
@@ -324,7 +386,7 @@ function checkExpiry(){
  return false;
 }
 
-// FORMAT MONEY
+// MONEY FORMAT
 
 function money(value){
  return "Rs. "+value.toLocaleString("en-PK");
@@ -388,6 +450,7 @@ function update(){
 // VIDEO STATUS
 
 function updateCards(){
+
  cardRecords.forEach(record=>{
 
   if(cycle.done.includes(record.index)){
@@ -406,10 +469,12 @@ function updateCards(){
  });
 }
 
-// VIDEO WATCHING
+// VIDEO GRID
 
 const grid=document.getElementById("videoGrid");
 const cardRecords=[];
+
+// VIDEO WATCHING
 
 videos.forEach((item,index)=>{
 
@@ -458,6 +523,7 @@ videos.forEach((item,index)=>{
  }
 
  video.addEventListener("playing",()=>{
+
   checkExpiry();
 
   if(cycle.done.includes(index)||cycle.done.length>=10){
@@ -477,6 +543,7 @@ videos.forEach((item,index)=>{
   const now=video.currentTime;
 
   if(lastTime!==null){
+
    const gap=now-lastTime;
 
    if(gap>0&&gap<=1.5){
@@ -497,23 +564,28 @@ videos.forEach((item,index)=>{
  });
 
  video.addEventListener("seeking",()=>{
+
   watched=0;
   lastTime=null;
 
   if(!cycle.done.includes(index)){
    status.textContent="Watch 10 seconds again";
   }
+
  });
 
  video.addEventListener("pause",()=>{
+
   lastTime=null;
 
   if(!cycle.done.includes(index)){
    watched=0;
+
    if(cycle.done.length<10){
     status.textContent="Paused - watch 10 seconds";
    }
   }
+
  });
 
  video.addEventListener("error",()=>{
@@ -523,20 +595,70 @@ videos.forEach((item,index)=>{
  card.appendChild(heading);
  card.appendChild(video);
  card.appendChild(status);
+
  grid.appendChild(card);
 
 });
+
+// WITHDRAWAL SYSTEM
+
+function requestWithdrawal(){
+
+ const now=Date.now();
+
+ try{
+  localStorage.setItem(WITHDRAW_KEY,String(now));
+  showWithdrawalNotification();
+ }catch(e){
+  alert("Unable to save withdrawal notification.");
+ }
+
+}
+
+function showWithdrawalNotification(){
+
+ const notification=
+ document.getElementById("withdrawNotification");
+
+ let requestTime=0;
+
+ try{
+  requestTime=Number(localStorage.getItem(WITHDRAW_KEY));
+ }catch(e){}
+
+ if(!requestTime){
+  notification.style.display="none";
+  return;
+ }
+
+ const remaining=
+ requestTime+WITHDRAW_TIME-Date.now();
+
+ if(remaining>0){
+
+  notification.style.display="block";
+
+ }else{
+
+  notification.style.display="none";
+
+  localStorage.removeItem(WITHDRAW_KEY);
+ }
+
+}
 
 // INITIALIZE
 
 checkExpiry();
 update();
+showWithdrawalNotification();
 
-// AUTO RESET CHECK
+// AUTO CHECK EVERY SECOND
 
 setInterval(()=>{
  checkExpiry();
  updateTimer();
+ showWithdrawalNotification();
 },1000);
 
 </script>
