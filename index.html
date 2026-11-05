@@ -160,18 +160,36 @@ video{
  transform:scale(.98);
 }
 
+/* PROFESSIONAL WITHDRAWAL MESSAGE */
+
 .withdraw-notification{
  display:none;
- margin-top:15px;
- padding:16px;
+ max-width:600px;
+ margin:25px auto 15px;
+ padding:22px;
  border:1px solid #00e5a0;
- border-radius:12px;
+ border-radius:14px;
  background:#0b2b29;
- color:#00e5a0;
+ color:#f5f8ff;
  text-align:center;
  font-size:14px;
+ line-height:1.8;
+}
+
+.withdraw-notification h3{
+ color:#00e5a0;
+ margin:0 0 12px;
+ font-size:18px;
+}
+
+.withdraw-notification p{
+ margin:8px 0;
+}
+
+.notice-footer{
+ color:#00e5a0;
  font-weight:bold;
- line-height:1.6;
+ margin-top:12px;
 }
 
 footer{
@@ -233,6 +251,7 @@ footer{
  </div>
 
  <p id="message">Complete any 10 videos.</p>
+
  <div id="timer">
   24-hour reset starts after your first completed video.
  </div>
@@ -264,23 +283,39 @@ footer{
   <strong>Easypaisa</strong>
  </div>
 
- <!-- WITHDRAWAL BUTTON -->
-
  <button class="withdraw-btn" onclick="requestWithdrawal()">
   💸 WITHDRAWAL
  </button>
 
- <!-- WITHDRAWAL NOTIFICATION -->
+</section>
 
- <div class="withdraw-notification" id="withdrawNotification">
-  ✓ Your withdrawal request is in process.
-  <br>
-  Please wait while your request is being processed.
+<!-- PROFESSIONAL WITHDRAWAL NOTICE AT BOTTOM -->
+
+<section class="withdraw-notification" id="withdrawNotification">
+
+ <h3>✓ Withdrawal Processing Notice</h3>
+
+ <p>
+ Your Rs. 3,000 withdrawal request is currently being
+ processed. The company will arrange your payment
+ as soon as possible.
+ </p>
+
+ <p>
+ We sincerely appreciate your patience, cooperation,
+ and understanding. Thank you for being a valued
+ member of AzDar.
+ </p>
+
+ <div class="notice-footer">
+ Thank You For Your Patience!
  </div>
 
 </section>
 
-<footer>© 2026 AzDar Web Studio</footer>
+<footer>
+© 2026 AzDar Web Studio
+</footer>
 
 <script>
 
@@ -327,8 +362,6 @@ const CYCLE_TIME=24*60*60*1000;
 
 const STORAGE_KEY="azdarVersion1Cycle";
 const EARNING_KEY="azdarTotalEarnings";
-const WITHDRAW_KEY="azdarWithdrawalRequest";
-const WITHDRAW_TIME=5*60*60*1000;
 
 // LOAD CYCLE
 
@@ -346,7 +379,7 @@ if(!cycle || !Array.isArray(cycle.done)){
 
 cycle.done=[...new Set(
  cycle.done.filter(n=>Number.isInteger(n)&&n>=0&&n<30)
-)].slice(0,10);
+)].slice(0,DAILY_LIMIT);
 
 // LOAD EARNINGS
 
@@ -427,15 +460,15 @@ function update(){
  const completed=cycle.done.length;
 
  document.getElementById("counter").textContent=
- completed+" / 10 Ads Completed";
+ completed+" / "+DAILY_LIMIT+" Ads Completed";
 
  document.getElementById("progress").style.width=
  (completed*10)+"%";
 
  document.getElementById("message").textContent=
- completed>=10
+ completed>=DAILY_LIMIT
  ?"Daily Target Completed! Come back after 24 hours."
- :(10-completed)+" ads remaining.";
+ :(DAILY_LIMIT-completed)+" ads remaining.";
 
  document.getElementById("dailyEarnings").textContent=
  money(completed*PER_VIDEO_EARNING);
@@ -457,7 +490,7 @@ function updateCards(){
    record.status.textContent="✓ Completed";
    record.status.className="status done";
 
-  }else if(cycle.done.length>=10){
+  }else if(cycle.done.length>=DAILY_LIMIT){
    record.status.textContent="Daily limit reached";
    record.status.className="status";
 
@@ -503,7 +536,7 @@ videos.forEach((item,index)=>{
 
   checkExpiry();
 
-  if(cycle.done.includes(index)||cycle.done.length>=10)return;
+  if(cycle.done.includes(index)||cycle.done.length>=DAILY_LIMIT)return;
 
   if(!cycle.startedAt){
    cycle.startedAt=Date.now();
@@ -526,7 +559,7 @@ videos.forEach((item,index)=>{
 
   checkExpiry();
 
-  if(cycle.done.includes(index)||cycle.done.length>=10){
+  if(cycle.done.includes(index)||cycle.done.length>=DAILY_LIMIT){
    video.pause();
    return;
   }
@@ -538,7 +571,7 @@ videos.forEach((item,index)=>{
 
   checkExpiry();
 
-  if(cycle.done.includes(index)||cycle.done.length>=10||video.paused)return;
+  if(cycle.done.includes(index)||cycle.done.length>=DAILY_LIMIT||video.paused)return;
 
   const now=video.currentTime;
 
@@ -581,7 +614,7 @@ videos.forEach((item,index)=>{
   if(!cycle.done.includes(index)){
    watched=0;
 
-   if(cycle.done.length<10){
+   if(cycle.done.length<DAILY_LIMIT){
     status.textContent="Paused - watch 10 seconds";
    }
   }
@@ -600,50 +633,19 @@ videos.forEach((item,index)=>{
 
 });
 
-// WITHDRAWAL SYSTEM
+// WITHDRAWAL BUTTON
 
 function requestWithdrawal(){
-
- const now=Date.now();
-
- try{
-  localStorage.setItem(WITHDRAW_KEY,String(now));
-  showWithdrawalNotification();
- }catch(e){
-  alert("Unable to save withdrawal notification.");
- }
-
-}
-
-function showWithdrawalNotification(){
 
  const notification=
  document.getElementById("withdrawNotification");
 
- let requestTime=0;
+ notification.style.display="block";
 
- try{
-  requestTime=Number(localStorage.getItem(WITHDRAW_KEY));
- }catch(e){}
-
- if(!requestTime){
-  notification.style.display="none";
-  return;
- }
-
- const remaining=
- requestTime+WITHDRAW_TIME-Date.now();
-
- if(remaining>0){
-
-  notification.style.display="block";
-
- }else{
-
-  notification.style.display="none";
-
-  localStorage.removeItem(WITHDRAW_KEY);
- }
+ notification.scrollIntoView({
+  behavior:"smooth",
+  block:"center"
+ });
 
 }
 
@@ -651,14 +653,12 @@ function showWithdrawalNotification(){
 
 checkExpiry();
 update();
-showWithdrawalNotification();
 
 // AUTO CHECK EVERY SECOND
 
 setInterval(()=>{
  checkExpiry();
  updateTimer();
- showWithdrawalNotification();
 },1000);
 
 </script>
